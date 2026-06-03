@@ -178,7 +178,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"Demo\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
@@ -275,7 +280,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNAME\",\n      \"fieldValue\": [\"Credit\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
@@ -304,7 +314,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNAME\",\n      \"fieldValue\": [\"Credit\"]\n    }\n  ],\n  \"unmaskColumns\": false,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
@@ -333,7 +348,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"USERGROUP\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
@@ -362,7 +382,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNUMBER\",\n      \"fieldValue\": [\"4111\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
