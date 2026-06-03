@@ -158,7 +158,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -179,7 +179,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -208,7 +208,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -241,7 +241,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -279,7 +279,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -321,7 +321,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -350,7 +350,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "Bearer {{access_token}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
