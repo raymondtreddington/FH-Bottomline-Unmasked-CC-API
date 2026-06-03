@@ -267,142 +267,136 @@
       "name": "Usergroup Account Access - Unmasked Credit Cards",
       "item": [
         {
-          "name": "Get All Accounts for UserGroup - MASKED",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "HTTP_nameid",
-                "value": "{{sso_id}}"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{access_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?limit=100&page=1",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                },
-                {
-                  "key": "page", 
-                  "value": "1"
-                }
-              ],
-              "variable": [
-                {
-                  "key": "userGroupId",
-                  "value": "",
-                  "description": "Enter the UserGroup ID to retrieve accounts for"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get All Accounts for UserGroup - UNMASKED",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "HTTP_nameid",
-                "value": "{{sso_id}}"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{access_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?limit=100&page=1&includeUnmaskedAccount=true",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "100"
-                },
-                {
-                  "key": "page", 
-                  "value": "1"
-                },
-                {
-                  "key": "includeUnmaskedAccount",
-                  "value": "true"
-                }
-              ],
-              "variable": [
-                {
-                  "key": "userGroupId",
-                  "value": "",
-                  "description": "Enter the UserGroup ID to retrieve unmasked accounts for"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Search Accounts with Criteria - MASKED",
+          "name": "Search Credit Card Accounts (UNMASKED)",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
-                "value": "{{sso_id}}"
+                "key": "HTTP_UserIdentifier",
+                "value": "SBX:ADMIN",
+                "type": "text"
               },
               {
                 "key": "Authorization",
-                "value": "{{access_token}}"
+                "value": "{{access_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
               },
               {
                 "key": "Content-Type",
-                "value": "application/json"
+                "value": "application/json",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"userGroup\": \"{{userGroupId}}\",\n    \"accountType\": \"CREDIT_CARD\"\n  },\n  \"sorting\": {\n    \"field\": \"ACCOUNTNUMBER\",\n    \"order\": \"ASC\"\n  },\n  \"pagination\": {\n    \"limit\": 50,\n    \"offset\": 0\n  }\n}"
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"accountType\",\n      \"fieldValue\": [\"CC\"]\n    },\n    {\n      \"fieldName\": \"userGroupId\", \n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
-          }
+          },
+          "response": []
         },
         {
-          "name": "Search Accounts with Criteria - UNMASKED",
+          "name": "Search Credit Card Accounts (MASKED)",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
-                "value": "{{sso_id}}"
+                "key": "HTTP_UserIdentifier",
+                "value": "SBX:ADMIN",
+                "type": "text"
               },
               {
                 "key": "Authorization",
-                "value": "{{access_token}}"
+                "value": "{{access_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
               },
               {
                 "key": "Content-Type",
-                "value": "application/json"
+                "value": "application/json",
+                "type": "text"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"userGroup\": \"{{userGroupId}}\",\n    \"accountType\": \"CREDIT_CARD\",\n    \"includeUnmaskedAccount\": true\n  },\n  \"sorting\": {\n    \"field\": \"ACCOUNTNUMBER\",\n    \"order\": \"ASC\"\n  },\n  \"pagination\": {\n    \"limit\": 50,\n    \"offset\": 0\n  }\n}"
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"accountType\",\n      \"fieldValue\": [\"CC\"]\n    },\n    {\n      \"fieldName\": \"userGroupId\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": false,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
-          }
+          },
+          "response": []
+        },
+        {
+          "name": "Search All Account Types (UNMASKED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_UserIdentifier",
+                "value": "SBX:ADMIN",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"userGroupId\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
