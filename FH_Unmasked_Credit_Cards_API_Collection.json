@@ -169,33 +169,39 @@
           }
         },
         {
-          "name": "Search User Groups",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "HTTP_nameid", 
-                "value": "{{sso_id}}"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{access_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "search"]
-            }
-          }
+        	"name": "Search User Groups",
+        	"request": {
+        		"method": "POST",
+        		"header": [
+        			{
+        				"key": "Content-Type",
+        				"value": "application/json"
+        			},
+        			{
+        				"key": "HTTP_nameid",
+        				"value": "{{sso_id}}"
+        			},
+        			{
+        				"key": "Authorization",
+        				"value": "{{access_token}}"
+        			}
+        		],
+        		"body": {
+        			"mode": "raw",
+        			"raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"{{company_name_search}}\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
+        		},
+        		"url": {
+        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
+        			"host": [
+        				"{{baseUrl}}"
+        			],
+        			"path": [
+        				"digital-banking",
+        				"onboarding-usergroup-provisioning",
+        				"usergroups:search"
+        			]
+        		}
+        	}
         },
         {
           "name": "Get User Group Details",
