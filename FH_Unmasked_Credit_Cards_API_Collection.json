@@ -84,6 +84,23 @@
       "item": [
         {
           "name": "Get OAuth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', 'Bearer ' + jsonData.access_token);",
+                  "    console.log('Access token set successfully');",
+                  "} else {",
+                  "    console.log('Authentication failed:', pm.response.text());",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
