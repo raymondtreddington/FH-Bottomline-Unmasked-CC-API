@@ -137,6 +137,102 @@
           }
         },
         {
+          "name": "Search User Groups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": {\n    \"companyName\": \"\",\n    \"status\": \"AP\",\n    \"marketSegment\": \"\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups:search"]
+            },
+            "description": "Search for user groups using filters like company name, status (AP=Approved), and market segment. Provides more detailed search capabilities than the basic list."
+          }
+        },
+        {
+          "name": "Get User Group Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{{userGroupId}}"]
+            },
+            "description": "Get detailed information about a specific user group including basic info, product settings, entitlements, and limits. Use a userGroupId discovered from previous endpoints."
+          }
+        },
+        {
+          "name": "Get User Group Entitlements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/entitlements",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{{userGroupId}}", "entitlements"]
+            },
+            "description": "Get product entitlements for a user group that define which features and services the group can access. Essential for understanding what data they can view."
+          }
+        },
+        {
+          "name": "Get User Group Limits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/limits",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{{userGroupId}}", "limits"]
+            },
+            "description": "Get transaction limits (daily, per-transaction) configured for the user group. Important for understanding access levels and permissions."
+          }
+        },
+        {
           "name": "Get All Credit Card Accounts",
           "request": {
             "method": "POST",
