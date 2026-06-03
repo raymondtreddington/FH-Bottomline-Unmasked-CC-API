@@ -306,7 +306,8 @@
                 "onboarding-usergroup-provisioning",
                 "accounts:search"
               ]
-            }
+            },
+            "description": "Search for credit card accounts with UNMASKED account numbers. Uses the ListViewRequest schema with unmaskColumns=true to return complete, unmasked account numbers for credit card accounts (accountType=CC). Change the userGroupId value in the request body to target a specific user group discovered from the Data Profiling endpoints."
           },
           "response": []
         },
@@ -350,7 +351,8 @@
                 "onboarding-usergroup-provisioning",
                 "accounts:search"
               ]
-            }
+            },
+            "description": "Search for credit card accounts with MASKED account numbers for comparison. Uses the same ListViewRequest schema but with unmaskColumns=false to return masked account numbers (e.g., ****1234). Compare results with the UNMASKED version to demonstrate the masking functionality."
           },
           "response": []
         },
@@ -394,7 +396,8 @@
                 "onboarding-usergroup-provisioning",
                 "accounts:search"
               ]
-            }
+            },
+            "description": "Search for all account types (checking, savings, credit cards, etc.) with UNMASKED account numbers. No accountType filter is applied, so this returns all accounts for the specified user group with complete account numbers visible. Useful for comprehensive account discovery."
           },
           "response": []
         }
