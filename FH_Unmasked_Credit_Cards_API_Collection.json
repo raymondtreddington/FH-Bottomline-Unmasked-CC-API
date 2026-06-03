@@ -80,6 +80,54 @@
   ],
   "item": [
     {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Get OAuth Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{client_id}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{client_secret}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "{{grant_type}}"
+                },
+                {
+                  "key": "scope",
+                  "value": "{{scope}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oauth/v1/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["oauth", "v1", "token"]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Data Profiling",
       "item": [
         {
