@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "First Horizon - Unmasked Credit Card Accounts API",
-    "description": "API collection for accessing unmasked credit card account numbers from Bottomline DBIQ. Demonstrates API-level bypass of UI masking for security/PCI compliance workflows.\n\nWorkflow: OAuth Authentication → Discover UserGroups → List Accounts → Search with Masking Control\n\n**Environment Variables Required:**\n- baseUrl: API base URL\n- client_id: OAuth client ID  \n- client_secret: OAuth client secret\n- scope: digital-banking\n- grant_type: client_credentials\n- sso_id: SSO identifier for HTTP_nameid header\n\n**Key Features:**\n- OAuth 2.0 client credentials flow with automatic token refresh\n- UserGroup discovery and account enumeration\n- Masked vs Unmasked account number demonstration\n- Proper field validation (USERGROUP, ACCOUNTNAME, ACCOUNTNUMBER, BANKCODE)",
+    "description": "API collection for accessing unmasked credit card account numbers from Bottomline DBIQ. Demonstrates API-level bypass of UI masking for security/PCI compliance workflows.\n\nWorkflow: OAuth Authentication \u2192 Discover UserGroups \u2192 List Accounts \u2192 Search with Masking Control\n\n**Environment Variables Required:**\n- baseUrl: API base URL\n- client_id: OAuth client ID  \n- client_secret: OAuth client secret\n- scope: digital-banking\n- grant_type: client_credentials\n- sso_id: SSO identifier for HTTP_nameid header\n\n**Key Features:**\n- OAuth 2.0 client credentials flow with automatic token refresh\n- UserGroup discovery and account enumeration\n- Masked vs Unmasked account number demonstration\n- Proper field validation (USERGROUP, ACCOUNTNAME, ACCOUNTNUMBER, BANKCODE)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -77,7 +77,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type", 
+                "key": "Content-Type",
                 "value": "application/x-www-form-urlencoded"
               }
             ],
@@ -89,7 +89,7 @@
                   "value": "{{client_id}}"
                 },
                 {
-                  "key": "password", 
+                  "key": "password",
                   "value": "{{client_secret}}"
                 }
               ]
@@ -109,8 +109,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/oauth/v1/token",
-              "host": ["{{baseUrl}}"],
-              "path": ["oauth", "v1", "token"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oauth",
+                "v1",
+                "token"
+              ]
             }
           },
           "event": [
@@ -153,8 +159,14 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "usergroups"
+              ]
             }
           }
         },
@@ -168,7 +180,7 @@
                 "value": "{{sso_id}}"
               },
               {
-                "key": "Authorization", 
+                "key": "Authorization",
                 "value": "{{access_token}}"
               },
               {
@@ -187,8 +199,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "usergroups:search"
+              ]
             }
           }
         },
@@ -208,8 +226,15 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "usergroups",
+                ":userGroupId"
+              ],
               "variable": [
                 {
                   "key": "userGroupId",
@@ -236,8 +261,16 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?includeUnmaskedAccount=true",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "usergroups",
+                ":userGroupId",
+                "accounts"
+              ],
               "query": [
                 {
                   "key": "includeUnmaskedAccount",
@@ -267,7 +300,14 @@
             "header": [
               {
                 "key": "HTTP_UserIdentifier",
-                "value": "{{sso_id}}"
+                "value": "{{sso_id}}",
+                "description": "For Sandbox environment"
+              },
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}",
+                "disabled": true,
+                "description": "For Client environment - enable this and disable HTTP_UserIdentifier"
               },
               {
                 "key": "Authorization",
@@ -280,7 +320,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"unmaskColumns\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -289,8 +329,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
           }
         },
@@ -301,7 +347,14 @@
             "header": [
               {
                 "key": "HTTP_UserIdentifier",
-                "value": "{{sso_id}}"
+                "value": "{{sso_id}}",
+                "description": "For Sandbox environment"
+              },
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}",
+                "disabled": true,
+                "description": "For Client environment - enable this and disable HTTP_UserIdentifier"
               },
               {
                 "key": "Authorization",
@@ -323,8 +376,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
           }
         },
@@ -335,7 +394,14 @@
             "header": [
               {
                 "key": "HTTP_UserIdentifier",
-                "value": "{{sso_id}}"
+                "value": "{{sso_id}}",
+                "description": "For Sandbox environment"
+              },
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}",
+                "disabled": true,
+                "description": "For Client environment - enable this and disable HTTP_UserIdentifier"
               },
               {
                 "key": "Authorization",
@@ -348,7 +414,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"unmaskColumns\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -357,19 +423,32 @@
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
           }
         },
         {
-          "name": "Search by Account Number - UNMASKED", 
+          "name": "Search by Account Number - UNMASKED",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "HTTP_UserIdentifier",
-                "value": "{{sso_id}}"
+                "value": "{{sso_id}}",
+                "description": "For Sandbox environment"
+              },
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}",
+                "disabled": true,
+                "description": "For Client environment - enable this and disable HTTP_UserIdentifier"
               },
               {
                 "key": "Authorization",
@@ -382,7 +461,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"unmaskColumns\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -391,8 +470,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "digital-banking",
+                "onboarding-usergroup-provisioning",
+                "accounts:search"
+              ]
             }
           }
         }
