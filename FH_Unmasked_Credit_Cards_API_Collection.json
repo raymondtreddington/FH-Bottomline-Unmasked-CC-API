@@ -7,72 +7,26 @@
   "auth": {
     "type": "inherit"
   },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "// Auto-acquire OAuth token before each request",
-          "const tokenUrl = pm.environment.get('baseUrl') + '/oauth/v1/token';",
-          "const clientId = pm.environment.get('client_id');",
-          "const clientSecret = pm.environment.get('client_secret');",
-          "const grantType = pm.environment.get('grant_type');",
-          "",
-          "// Determine scope based on request URL",
-          "let scope;",
-          "const requestUrl = pm.request.url.toString();",
-          "if (requestUrl.includes('onboarding-usergroup-provisioning') || requestUrl.includes('usergroups')) {",
-          "    scope = pm.environment.get('scope'); // Provisioning scope",
-          "} else {",
-          "    scope = pm.environment.get('scope_client'); // Client/reporting scope",
-          "}",
-          "",
-          "// Skip token refresh for OAuth endpoint itself",
-          "if (pm.request.url.toString().includes('/oauth/v1/token')) {",
-          "    return;",
-          "}",
-          "",
-          "const tokenRequest = {",
-          "    url: tokenUrl,",
-          "    method: 'POST',",
-          "    header: {",
-          "        'Content-Type': 'application/x-www-form-urlencoded',",
-          "        'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)",
-          "    },",
-          "    body: {",
-          "        mode: 'urlencoded',",
-          "        urlencoded: [",
-          "            { key: 'grant_type', value: grantType },",
-          "            { key: 'scope', value: scope }",
-          "        ]",
-          "    }",
-          "};",
-          "",
-          "pm.sendRequest(tokenRequest, (err, response) => {",
-          "    if (err) {",
-          "        console.log('Token request failed:', err);",
-          "        return;",
-          "    }",
-          "    ",
-          "    if (response.code === 200) {",
-          "        const responseJson = response.json();",
-          "        const accessToken = responseJson.access_token;",
-          "        pm.collectionVariables.set('access_token', accessToken);",
-          "        console.log('Token refreshed successfully');",
-          "    } else {",
-          "        console.log('Token request failed with status:', response.code);",
-          "        console.log('Response:', response.text());",
-          "    }",
-          "});"
-        ]
-      }
-    }
-  ],
+
   "variable": [
     {
       "key": "access_token",
       "value": ""
+    },
+    {
+      "key": "userGroupId",
+      "value": "CPTR1",
+      "type": "string"
+    },
+    {
+      "key": "searchTerm",
+      "value": "CPTR",
+      "type": "string"
+    },
+    {
+      "key": "accountNumber",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -198,7 +152,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\\n  \\\"listViewRequest\\\": {\\n    \\\"filters\\\": [\\n      {\\n        \\\"fieldName\\\": \\\"GROUPNAME\\\",\\n        \\\"searchText\\\": \\\"{{searchTerm}}\\\",\\n        \\\"type\\\": \\\"CONTAINS\\\"\\n      }\\n    ]\\n  }\\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -289,8 +243,8 @@
               "variable": [
                 {
                   "key": "userGroupId",
-                  "value": "12345",
-                  "description": "Replace with actual UserGroup ID"
+                  "value": "CPTR1",
+                  "description": "Default userGroupId for testing"
                 }
               ]
             }
@@ -328,7 +282,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"unmaskColumns\": true\n}",
+              "raw": "{\\n  \\\"unmaskColumns\\\": [\\\"ACCOUNT_NBR\\\"],\\n  \\\"listViewRequest\\\": {\\n    \\\"filters\\\": [\\n      {\\n        \\\"fieldName\\\": \\\"USERGROUP\\\",\\n        \\\"searchText\\\": \\\"{{userGroupId}}\\\",\\n        \\\"type\\\": \\\"EXACT\\\"\\n      }\\n    ]\\n  }\\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -422,7 +376,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"unmaskColumns\": true\n}",
+              "raw": "{\\n  \\\"unmaskColumns\\\": [\\\"ACCOUNT_NBR\\\"],\\n  \\\"listViewRequest\\\": {\\n    \\\"filters\\\": [\\n      {\\n        \\\"fieldName\\\": \\\"USERGROUP\\\",\\n        \\\"searchText\\\": \\\"CPTR1\\\",\\n        \\\"type\\\": \\\"EXACT\\\"\\n      }\\n    ]\\n  }\\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -469,7 +423,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"unmaskColumns\": true\n}",
+              "raw": "{\\n  \\\"unmaskColumns\\\": [\\\"ACCOUNT_NBR\\\"],\\n  \\\"listViewRequest\\\": {\\n    \\\"filters\\\": [\\n      {\\n        \\\"fieldName\\\": \\\"ACCOUNTNUMBER\\\",\\n        \\\"searchText\\\": \\\"{{accountNumber}}\\\",\\n        \\\"type\\\": \\\"EXACT\\\"\\n      }\\n    ]\\n  }\\n}",
               "options": {
                 "raw": {
                   "language": "json"
