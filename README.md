@@ -41,17 +41,19 @@ The core insight is that DBIQ APIs support an `includeUnmaskedAccount` flag that
 
 ### 🔍 **Data Profiling**
 Discovery endpoints to explore and understand the sandbox environment:
-- **List All Usergroups**: Find valid usergroup IDs in the environment
-- **Get Usergroup Details**: Examine specific usergroup configuration  
-- **List Accounts for Usergroup**: Discover accounts associated with usergroups
-- **Search Credit Card Accounts**: Locate credit card accounts specifically
+- **Search User Groups**: Find valid usergroup IDs using filters (primary discovery method)
+- **Get User Group Details**: Examine specific usergroup configuration  
+- **Get User Group Entitlements**: Check product access permissions
+- **Get User Group Limits**: View transaction limits and access levels
 
 ### 🎯 **Helpful Endpoints**
 Core endpoints demonstrating masked vs unmasked account number retrieval:
-- **Credit Card Balance (Masked/Unmasked)**: Compare responses with `includeUnmaskedAccount` flag
-- **Credit Card Transactions (Masked/Unmasked)**: Transaction history with masking control
-- **Get Account Details (Provisioning)**: Admin-level account information access
-- **Account Balance Summary**: Multi-account balance retrieval with masking flags
+- **Credit Card Balance (Current Day) - Masked**: Get balance data with masked account numbers (`includeUnmaskedAccount: false`)
+- **Credit Card Balance (Current Day) - Unmasked**: Get balance data with full 16-digit account numbers (`includeUnmaskedAccount: true`)
+- **Credit Card Transactions - Masked**: Transaction history with masked account numbers
+- **Credit Card Transactions - Unmasked**: Transaction history with full account number display
+
+**Note**: Administrative endpoints like ALLACCOUNTS require elevated permissions not available with standard customer API credentials.
 
 ## 🚀 **Getting Started**
 
@@ -105,15 +107,15 @@ Core endpoints demonstrating masked vs unmasked account number retrieval:
 
 ### Phase 1: Data Profiling
 1. **Authenticate**: Get OAuth2 token
-2. **Discover Usergroups**: Run "List All Usergroups" to find valid IDs
-3. **Profile Accounts**: Use "List Accounts for Usergroup" to find credit card accounts
-4. **Search Credit Cards**: Use "Search Credit Card Accounts" for targeted discovery
+2. **Discover Usergroups**: Run "Search User Groups" to find valid IDs 
+3. **Profile Groups**: Use "Get User Group Details" to examine configurations
+4. **Check Permissions**: Use "Get User Group Entitlements" to verify credit card access
 
 ### Phase 2: Masked vs Unmasked Testing
-1. **Test Masked Response**: Run "Credit Card Balance - Masked" (`includeUnmaskedAccount: false`)
-2. **Test Unmasked Response**: Run "Credit Card Balance - Unmasked" (`includeUnmaskedAccount: true`) 
+1. **Test Masked Response**: Run "Credit Card Balance (Current Day) - Masked" (`includeUnmaskedAccount: false`)
+2. **Test Unmasked Response**: Run "Credit Card Balance (Current Day) - Unmasked" (`includeUnmaskedAccount: true`) 
 3. **Compare Results**: Identify the presence of `unmaskedAccount` fields
-4. **Repeat for Transactions**: Test transaction endpoints with both flag settings
+4. **Repeat for Transactions**: Test both masked and unmasked transaction endpoints
 
 ### Phase 3: Validation
 1. **Verify Full Numbers**: Confirm unmasked responses contain complete 16-digit credit card numbers

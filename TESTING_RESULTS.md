@@ -8,8 +8,8 @@ This document tracks the testing results for each endpoint in our quest to find 
 
 | Priority | Endpoint | Status | Unmasked Data Found | Notes |
 |----------|----------|--------|-------------------|-------|
-| 🔴 HIGH | Credit Card All Accounts Summary | ⏳ PENDING | ❓ TBD | Test with includeUnmaskedAccount flag |
-| 🔴 HIGH | Credit Card Current Day Summary | ⏳ PENDING | ❓ TBD | Admin-level access required |
+| 🔴 HIGH | Credit Card Current Day Summary - Masked | ⏳ PENDING | ❓ TBD | Balance data with includeUnmaskedAccount: false |
+| 🔴 HIGH | Credit Card Current Day Summary - Unmasked | ⏳ PENDING | ❓ TBD | Balance data with includeUnmaskedAccount: true |
 | 🔴 HIGH | Real-Time Credit Card Balances | ⏳ PENDING | ❓ TBD | Real-time requests may bypass masking |
 | 🔴 HIGH | Credit Card Transaction List | ⏳ PENDING | ❓ TBD | Transaction details may include full numbers |
 | 🔴 HIGH | Real-Time Credit Card Transactions | ⏳ PENDING | ❓ TBD | Highest probability for unmasked data |
@@ -32,13 +32,13 @@ This document tracks the testing results for each endpoint in our quest to find 
 ### Phase 2: HIGH Priority Testing
 Test credit card specific endpoints first as these have the highest probability:
 
-1. **All Credit Card Accounts Summary**
+1. **Current Day Credit Card Balance (Masked vs Unmasked)**
    ```bash
    Expected Response Fields to Check:
-   - accountNumber (look for full 16 digits)
-   - unmaskedAccountNumber
-   - fullAccountNumber
-   - maskedIndicator: false
+   - accountNumber (masked: ****1234)
+   - unmaskedAccount (full 16 digits when includeUnmaskedAccount: true)
+   - accountType: "CREDIT_CARD"
+   - maskedIndicator field differences
    ```
 
 2. **Real-Time Requests** 

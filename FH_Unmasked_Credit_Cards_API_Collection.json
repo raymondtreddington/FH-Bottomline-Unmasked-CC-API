@@ -202,36 +202,7 @@
             "description": "Get transaction limits (daily, per-transaction) configured for the user group. Important for understanding access levels and permissions."
           }
         },
-        {
-          "name": "Get All Credit Card Accounts",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "HTTP_nameid", 
-                "value": "{{sso_id}}"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{access_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_all_001\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/ALLACCOUNTS/accountSummary/getListView",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-balances", "balanceAndTransaction", "creditCardAccounts", "ALLACCOUNTS", "accountSummary", "getListView"]
-            },
-            "description": "Get all credit card accounts across all usergroups that the authenticated user has access to. This is a system-wide search for credit card accounts."
-          }
-        }
+
       ]
     },
     {
