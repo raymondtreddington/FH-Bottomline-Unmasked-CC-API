@@ -188,10 +188,10 @@
         		],
         		"body": {
         			"mode": "raw",
-        			"raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"{{company_name_search}}\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
+        			"raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"Demo\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
         		},
         		"url": {
-        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
+        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search?company_name_search=Demo&search_field=COMPANYNAME&search_type=CONTAINS",
         			"host": [
         				"{{baseUrl}}"
         			],
@@ -199,6 +199,23 @@
         				"digital-banking",
         				"onboarding-usergroup-provisioning",
         				"usergroups:search"
+        			],
+        			"query": [
+        				{
+        					"key": "company_name_search",
+        					"value": "Demo",
+        					"description": "Company name to search for (partial match)"
+        				},
+        				{
+        					"key": "search_field",
+        					"value": "COMPANYNAME",
+        					"description": "Field to search by (COMPANYNAME, COMPANYID, STATUS, etc.)"
+        				},
+        				{
+        					"key": "search_type",
+        					"value": "CONTAINS",
+        					"description": "Search type (CONTAINS, EXACT, STARTS_WITH)"
+        				}
         			]
         		}
         	}
