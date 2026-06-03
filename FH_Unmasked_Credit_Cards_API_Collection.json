@@ -222,7 +222,37 @@
                   "description": "Enter the UserGroup ID to retrieve details"
                 }
               ]
-            }
+            },
+            "description": "Get detailed information about a specific user group including basic info, product settings, entitlements, and limits. Use a userGroupId discovered from previous endpoints."
+          }
+        },
+        {
+          "name": "Get All Accounts for User Group",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
+              "variable": [
+                {
+                  "key": "userGroupId",
+                  "value": "",
+                  "description": "Enter the UserGroup ID to retrieve all accounts"
+                }
+              ]
+            },
+            "description": "Read all client accounts and their details for a User Group. This endpoint lists all accounts (checking, savings, credit cards, etc.) associated with a specific usergroup. Perfect for data profiling to discover what account types and numbers exist before testing masked vs unmasked access."
           }
         }
       ]
