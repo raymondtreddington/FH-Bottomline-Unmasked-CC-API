@@ -90,6 +90,17 @@ Core endpoints demonstrating masked vs unmasked account number retrieval:
    - Run the "Get OAuth2 Access Token" request first (uses Basic Auth with client credentials)
    - The access token will be automatically set as `{{access_token}}` for subsequent requests
 
+4. **Using Path Variables**:
+   - Some endpoints have path variables like `:userGroupId` or `:accountNumber`
+   - In Postman, go to the **Params** tab in your request
+   - You'll see **Path Variables** section with fields to fill in
+   - Enter values obtained from previous API calls (e.g., from "List All Usergroups")
+
+5. **Using Request Body Variables**:
+   - Request bodies use `{{userGroupId}}` and `{{creditCardAccountNumber}}` variables
+   - Set these in your environment, or replace directly in the request body
+   - Example: Change `"userGroupId": "{{userGroupId}}"` to `"userGroupId": "12345"`
+
 ## 🧪 **Testing Workflow**
 
 ### Phase 1: Data Profiling
