@@ -125,19 +125,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups?page=1&limit=200",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "limit", 
-                  "value": "200"
-                }
-              ]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"]
             },
             "description": "PRIMARY DISCOVERY ENDPOINT: List all user groups with pagination. This is the simplest way to discover available user groups in the system. Returns userGroupSummaries array with userGroupId, groupName, and other details."
           }
@@ -162,7 +152,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"companyName\": \"\",\n    \"status\": \"AP\",\n    \"marketSegment\": \"\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
+              "raw": "{}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
