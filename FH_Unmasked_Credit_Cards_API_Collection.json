@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "FH Unmasked Credit Card API Collection",
-    "description": "Complete collection for retrieving unmasked credit card account numbers from Bottomline DBIQ APIs",
+    "name": "First Horizon - Unmasked Credit Card Accounts API",
+    "description": "API collection for accessing unmasked credit card account numbers from Bottomline DBIQ. Demonstrates API-level bypass of UI masking for security/PCI compliance workflows.\n\nWorkflow: OAuth Authentication → Discover UserGroups → List Accounts → Search with Masking Control\n\n**Environment Variables Required:**\n- baseUrl: API base URL\n- client_id: OAuth client ID  \n- client_secret: OAuth client secret\n- scope: digital-banking\n- grant_type: client_credentials\n- sso_id: SSO identifier for HTTP_nameid header\n\n**Key Features:**\n- OAuth 2.0 client credentials flow with automatic token refresh\n- UserGroup discovery and account enumeration\n- Masked vs Unmasked account number demonstration\n- Proper field validation (USERGROUP, ACCOUNTNAME, ACCOUNTNUMBER, BANKCODE)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -11,59 +11,52 @@
     {
       "listen": "prerequest",
       "script": {
+        "type": "text/javascript",
         "exec": [
-          "// OAuth Token Management",
-          "if (!pm.collectionVariables.get('access_token') || ",
-          "    Date.now() > pm.collectionVariables.get('token_expires_at')) {",
-          "    console.log('Getting new access token...');",
+          "// Auto-acquire OAuth token before each request",
+          "const tokenUrl = pm.environment.get('baseUrl') + '/oauth/v1/token';",
+          "const clientId = pm.environment.get('client_id');",
+          "const clientSecret = pm.environment.get('client_secret');",
+          "const grantType = pm.environment.get('grant_type');",
+          "const scope = pm.environment.get('scope');",
+          "",
+          "// Skip token refresh for OAuth endpoint itself",
+          "if (pm.request.url.toString().includes('/oauth/v1/token')) {",
+          "    return;",
+          "}",
+          "",
+          "const tokenRequest = {",
+          "    url: tokenUrl,",
+          "    method: 'POST',",
+          "    header: {",
+          "        'Content-Type': 'application/x-www-form-urlencoded',",
+          "        'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)",
+          "    },",
+          "    body: {",
+          "        mode: 'urlencoded',",
+          "        urlencoded: [",
+          "            { key: 'grant_type', value: grantType },",
+          "            { key: 'scope', value: scope }",
+          "        ]",
+          "    }",
+          "};",
+          "",
+          "pm.sendRequest(tokenRequest, (err, response) => {",
+          "    if (err) {",
+          "        console.log('Token request failed:', err);",
+          "        return;",
+          "    }",
           "    ",
-          "    pm.sendRequest({",
-          "        url: pm.variables.get('baseUrl') + '/oauth/v1/token',",
-          "        method: 'POST',",
-          "        header: {",
-          "            'Content-Type': 'application/x-www-form-urlencoded'",
-          "        },",
-          "        auth: {",
-          "            type: 'basic',",
-          "            basic: [{",
-          "                key: 'username',",
-          "                value: pm.variables.get('client_id')",
-          "            }, {",
-          "                key: 'password',",
-          "                value: pm.variables.get('client_secret')",
-          "            }]",
-          "        },",
-          "        body: {",
-          "            mode: 'urlencoded',",
-          "            urlencoded: [{",
-          "                key: 'grant_type',",
-          "                value: pm.variables.get('grant_type')",
-          "            }, {",
-          "                key: 'scope',",
-          "                value: pm.variables.get('scope')",
-          "            }]",
-          "        }",
-          "    }, function (err, response) {",
-          "        if (err) {",
-          "            console.error('OAuth request failed:', err);",
-          "            throw new Error('OAuth authentication failed');",
-          "        }",
-          "        ",
+          "    if (response.code === 200) {",
           "        const responseJson = response.json();",
-          "        if (response.code === 200 && responseJson.access_token) {",
-          "            const expiresIn = responseJson.expires_in || 3600;",
-          "            const expiresAt = Date.now() + (expiresIn * 1000);",
-          "            ",
-          "            pm.collectionVariables.set('access_token', responseJson.access_token);",
-          "            pm.collectionVariables.set('token_expires_at', expiresAt);",
-          "            ",
-          "            console.log('Access token obtained successfully');",
-          "        } else {",
-          "            console.error('OAuth failed:', responseJson);",
-          "            throw new Error('OAuth authentication failed: ' + JSON.stringify(responseJson));",
-          "        }",
-          "    });",
-          "}"
+          "        const accessToken = 'Bearer ' + responseJson.access_token;",
+          "        pm.collectionVariables.set('access_token', accessToken);",
+          "        console.log('Token refreshed successfully');",
+          "    } else {",
+          "        console.log('Token request failed with status:', response.code);",
+          "        console.log('Response:', response.text());",
+          "    }",
+          "});"
         ]
       }
     }
@@ -71,10 +64,6 @@
   "variable": [
     {
       "key": "access_token",
-      "value": ""
-    },
-    {
-      "key": "token_expires_at",
       "value": ""
     }
   ],
@@ -84,28 +73,11 @@
       "item": [
         {
           "name": "Get OAuth Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('access_token', 'Bearer ' + jsonData.access_token);",
-                  "    console.log('Access token set successfully');",
-                  "} else {",
-                  "    console.log('Authentication failed:', pm.response.text());",
-                  "}"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
+                "key": "Content-Type", 
                 "value": "application/x-www-form-urlencoded"
               }
             ],
@@ -117,7 +89,7 @@
                   "value": "{{client_id}}"
                 },
                 {
-                  "key": "password",
+                  "key": "password", 
                   "value": "{{client_secret}}"
                 }
               ]
@@ -140,7 +112,25 @@
               "host": ["{{baseUrl}}"],
               "path": ["oauth", "v1", "token"]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    const accessToken = 'Bearer ' + responseJson.access_token;",
+                  "    pm.collectionVariables.set('access_token', accessToken);",
+                  "    console.log('Access token set:', accessToken.substring(0, 20) + '...');",
+                  "} else {",
+                  "    console.log('OAuth failed with status:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -148,7 +138,7 @@
       "name": "Data Profiling",
       "item": [
         {
-          "name": "Get All Usergroups",
+          "name": "Get All UserGroups",
           "request": {
             "method": "GET",
             "header": [
@@ -169,39 +159,33 @@
           }
         },
         {
-        	"name": "Search User Groups",
-        	"request": {
-        		"method": "POST",
-        		"header": [
-        			{
-        				"key": "Content-Type",
-        				"value": "application/json"
-        			},
-        			{
-        				"key": "HTTP_nameid",
-        				"value": "{{sso_id}}"
-        			},
-        			{
-        				"key": "Authorization",
-        				"value": "{{access_token}}"
-        			}
-        		],
-        		"body": {
-        			"mode": "raw",
-        			"raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"Demo\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
-        		},
-        		"url": {
-        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
-        			"host": [
-        				"{{baseUrl}}"
-        			],
-        			"path": [
-        				"digital-banking",
-        				"onboarding-usergroup-provisioning",
-        				"usergroups:search"
-        			]
-        		}
-        	}
+          "name": "Search User Groups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization", 
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"Demo\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups:search"]
+            }
+          }
         },
         {
           "name": "Get User Group Details",
@@ -224,12 +208,11 @@
               "variable": [
                 {
                   "key": "userGroupId",
-                  "value": "",
-                  "description": "Enter the UserGroup ID to retrieve details"
+                  "value": "12345",
+                  "description": "Replace with actual UserGroup ID from previous calls"
                 }
               ]
-            },
-            "description": "Get detailed information about a specific user group including basic info, product settings, entitlements, and limits. Use a userGroupId discovered from previous endpoints."
+            }
           }
         },
         {
@@ -247,27 +230,33 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?includeUnmaskedAccount=true",
               "host": ["{{baseUrl}}"],
               "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
+              "query": [
+                {
+                  "key": "includeUnmaskedAccount",
+                  "value": "true",
+                  "description": "Include unmasked account numbers in response"
+                }
+              ],
               "variable": [
                 {
                   "key": "userGroupId",
-                  "value": "",
-                  "description": "Enter the UserGroup ID to retrieve all accounts"
+                  "value": "12345",
+                  "description": "Replace with actual UserGroup ID"
                 }
               ]
-            },
-            "description": "Read all client accounts and their details for a User Group. This endpoint lists all accounts (checking, savings, credit cards, etc.) associated with a specific usergroup. Perfect for data profiling to discover what account types and numbers exist before testing masked vs unmasked access."
+            }
           }
         }
       ]
     },
     {
-      "name": "Usergroup Account Access - Unmasked Credit Cards",
+      "name": "Account Search - CORRECTED",
       "item": [
         {
-          "name": "Search Credit Card Accounts (UNMASKED)",
+          "name": "Search Accounts - UNMASKED (Credit Cards)",
           "request": {
             "method": "POST",
             "header": [
@@ -286,25 +275,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"accountType\",\n      \"fieldValue\": [\"CC\"]\n    },\n    {\n      \"fieldName\": \"userGroupId\", \n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNAME\",\n      \"fieldValue\": [\"Credit\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "accounts:search"
-              ]
-            },
-            "description": "Search for credit card accounts with UNMASKED account numbers. Uses the ListViewRequest schema with unmaskColumns=true to return complete, unmasked account numbers for credit card accounts (accountType=CC). Change the userGroupId value in the request body to target a specific user group discovered from the Data Profiling endpoints."
-          },
-          "response": []
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+            }
+          }
         },
         {
-          "name": "Search Credit Card Accounts (MASKED)",
+          "name": "Search Accounts - MASKED (Credit Cards)",
           "request": {
             "method": "POST",
             "header": [
@@ -323,25 +304,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"accountType\",\n      \"fieldValue\": [\"CC\"]\n    },\n    {\n      \"fieldName\": \"userGroupId\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": false,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNAME\",\n      \"fieldValue\": [\"Credit\"]\n    }\n  ],\n  \"unmaskColumns\": false,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "accounts:search"
-              ]
-            },
-            "description": "Search for credit card accounts with MASKED account numbers for comparison. Uses the same ListViewRequest schema but with unmaskColumns=false to return masked account numbers (e.g., ****1234). Compare results with the UNMASKED version to demonstrate the masking functionality."
-          },
-          "response": []
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+            }
+          }
         },
         {
-          "name": "Search All Account Types (UNMASKED)",
+          "name": "Search by UserGroup - UNMASKED",
           "request": {
             "method": "POST",
             "header": [
@@ -360,22 +333,43 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"userGroupId\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"USERGROUP\",\n      \"fieldValue\": [\"12345\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "accounts:search"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+            }
+          }
+        },
+        {
+          "name": "Search by Account Number - UNMASKED", 
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"criteria\": [\n    {\n      \"fieldName\": \"ACCOUNTNUMBER\",\n      \"fieldValue\": [\"4111\"]\n    }\n  ],\n  \"unmaskColumns\": true,\n  \"operationalData\": true,\n  \"limit\": 25,\n  \"page\": 1\n}"
             },
-            "description": "Search for all account types (checking, savings, credit cards, etc.) with UNMASKED account numbers. No accountType filter is applied, so this returns all accounts for the specified user group with complete account numbers visible. Useful for comprehensive account discovery."
-          },
-          "response": []
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
+            }
+          }
         }
       ]
     }
