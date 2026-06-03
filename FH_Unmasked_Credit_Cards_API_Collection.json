@@ -107,36 +107,6 @@
       "name": "Data Profiling",
       "item": [
         {
-          "name": "Get User Groups",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "HTTP_nameid",
-                "value": "{{sso_id}}"
-              },
-              {
-                "key": "Authorization",
-                "value": "{{access_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"ug_list_001\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"userGroupName\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups",
-              "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"]
-            },
-            "description": "Discover available user groups in the system. Use the userGroupId from this response in subsequent account queries."
-          }
-        },
-        {
           "name": "Search User Groups",
           "request": {
             "method": "POST",
@@ -163,7 +133,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups:search"]
             },
-            "description": "Search for user groups using filters like company name, status (AP=Approved), and market segment. Provides more detailed search capabilities than the basic list."
+            "description": "PRIMARY DISCOVERY ENDPOINT: Search for user groups using filters. Leave filters empty to get all approved (AP status) user groups in the system. This is the main way to discover available user groups since there's no simple 'list all' endpoint."
           }
         },
         {
