@@ -156,7 +156,7 @@
           }
         },
         {
-          "name": "Search Credit Card Accounts",
+          "name": "Get All Credit Card Accounts",
           "request": {
             "method": "POST",
             "header": [
@@ -175,14 +175,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountType\": \"CREDIT_CARD\",\n  \"status\": \"ACTIVE\"\n}"
+              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_all_001\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/credit-card/search",
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/ALLACCOUNTS/accountSummary/getListView",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-balances", "credit-card", "search"]
+              "path": ["digital-banking", "reporting-account-balances", "balanceAndTransaction", "creditCardAccounts", "ALLACCOUNTS", "accountSummary", "getListView"]
             },
-            "description": "Search specifically for credit card accounts across all accessible usergroups"
+            "description": "Get all credit card accounts across all usergroups that the authenticated user has access to. This is a system-wide search for credit card accounts."
           }
         }
       ]
