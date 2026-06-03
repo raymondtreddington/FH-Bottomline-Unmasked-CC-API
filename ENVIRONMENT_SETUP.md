@@ -1,167 +1,115 @@
-# Environment Setup for First Horizon - Bottomline DBIQ API Testing
+# Bottomline DBIQ API Environment Setup
 
-## ⚠️ Current OAuth Issues (2026-06-03)
+This guide covers setting up the proper environment variables and authentication for the First Horizon DBIQ Credit Card Data Profiling collection.
 
-**Status:** OAuth authentication is currently failing with "invalid_scope" errors.
+## 🔧 Required Environment Variables
 
-The credentials below are from the OpenClaw .env file and were confirmed working on 2026-04-18, but the Bottomline sandbox OAuth configuration appears to have changed.
+Configure these variables in your Postman environment:
 
-**Contact for OAuth Support:**
-- Email: DBIQE-APIDevPortal-ProductSupport@bottomline.com
-- Issue: Need current valid OAuth scope values for sandbox environment
+| Variable | Value | Description |
+|----------|--------|-------------|
+| `baseUrl` | `https://sandbox.bottomline.app` | Bottomline API base URL |
+| `client_id` | `[YOUR_CLIENT_ID]` | OAuth client ID from Bottomline |
+| `client_secret` | `[YOUR_CLIENT_SECRET]` | OAuth client secret from Bottomline |
+| `scope` | `dbiq_all` | OAuth scope for DBIQ access |
+| `grant_type` | `client_credentials` | OAuth grant type |
+| `sso_id` | `SBX:CLIENT` | SSO identifier for API requests |
+| `accessToken` | `[AUTO-SET]` | OAuth token (automatically set by auth request) |
 
-## Required Environment Variables
+## 🔑 Authentication Flow
 
-### Client Services Environment (for Account Balances & Transactions)
+### Step 1: Configure Credentials
+1. Open Postman Environment settings
+2. Set `client_id` and `client_secret` from your Bottomline developer account
+3. Ensure `scope` is set to `dbiq_all` (or appropriate scope for your environment)
 
+### Step 2: Obtain Access Token
+1. Run the "Get OAuth2 Access Token" request in the Authentication folder
+2. The request will automatically set the `accessToken` variable on success
+3. All subsequent requests will use this token via `{{accessToken}}`
+
+### Step 3: Verify Authentication
+```http
+POST {{baseUrl}}/oauth/v1/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&grant_type={{grant_type}}&scope={{scope}}
+```
+
+Expected response:
 ```json
 {
-  "name": "Bottomline DBIQ - Client Services",
-  "values": [
-    {
-      "key": "baseUrl",
-      "value": "https://sandbox.bottomline.app",
-      "enabled": true
-    },
-    {
-      "key": "client_id", 
-      "value": "05468a71-3639-4ff9-98db-0dd91846f576",
-      "enabled": true
-    },
-    {
-      "key": "client_secret",
-      "value": "DDK2mvH0jpYqhvMhS8BrllUPPtfMg7ge", 
-      "enabled": true
-    },
-    {
-      "key": "auth_token_url",
-      "value": "https://sandbox.bottomline.app/oauth/v1/token",
-      "enabled": true
-    },
-    {
-      "key": "ssoid",
-      "value": "SBX:CLIENT",
-      "enabled": true
-    },
-    {
-      "key": "access_token",
-      "value": "",
-      "enabled": true
-    }
-  ]
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "Bearer", 
+  "expires_in": 3600
 }
 ```
 
-### Provisioning Environment (for User Group & Account Provisioning)
+## 🏷️ Header Configuration
 
-```json
-{
-  "name": "Bottomline DBIQ - Provisioning",  
-  "values": [
-    {
-      "key": "baseUrl",
-      "value": "https://sandbox.bottomline.app",
-      "enabled": true
-    },
-    {
-      "key": "client_id",
-      "value": "a5826cd0-7a33-4b23-9974-bc0780c6d009", 
-      "enabled": true
-    },
-    {
-      "key": "client_secret",
-      "value": "fpdSq5IgP0nr5ul4BlArqYUihkc4V2y9",
-      "enabled": true
-    },
-    {
-      "key": "auth_token_url",
-      "value": "https://sandbox.bottomline.app/oauth/v1/token",
-      "enabled": true
-    },
-    {
-      "key": "ssoid",
-      "value": "SBX:ADMIN",
-      "enabled": true
-    },
-    {
-      "key": "access_token",
-      "value": "",
-      "enabled": true
-    },
-    {
-      "key": "userGroupId",
-      "value": "SAMPLE_USER_GROUP_ID",
-      "enabled": true
-    }
-  ]
-}
-```
+All API requests (except authentication) use these headers:
 
-## Setup Steps
+| Header | Value | Purpose |
+|--------|--------|---------|
+| `HTTP_nameid` | `{{sso_id}}` | User identification |
+| `Authorization` | `{{accessToken}}` | Bearer token authentication |
+| `Content-Type` | `application/json` | Request body format (for POST requests) |
 
-1. **OAuth Scope Resolution (REQUIRED FIRST)**:
-   - Contact DBIQE-APIDevPortal-ProductSupport@bottomline.com
-   - Request current valid OAuth scope values for client_credentials grant
-   - Specifically need scopes for:
-     - digital-banking reporting APIs (account balances, transactions)
-     - digital-banking provisioning APIs (user management, account maintenance)
+## 🌐 Environment-Specific Settings
 
-2. **Import Environment**:
-   - In Postman, go to Environments
-   - Click "Import" and create two environments with the JSON above
-   - Use Client Services environment for reporting endpoints
-   - Use Provisioning environment for user/account management endpoints
+### Client Services Environment
+- **Client ID**: `05468a71-3639-4ff9-98db-0dd91846f576`
+- **SSO ID**: `SBX:CLIENT`
+- **Use Cases**: Account balances, transaction history, reporting
 
-3. **Test Authentication (once scopes resolved)**:
-   - Run the "Get OAuth2 Access Token" request
-   - Verify that the `access_token` variable is automatically set
-   - Test with both environments
+### Administrative Environment  
+- **Client ID**: `a5826cd0-7a33-4b23-9974-bc0780c6d009`
+- **SSO ID**: `SBX:ADMIN` 
+- **Use Cases**: User group provisioning, account management
 
-4. **Find User Group ID**:
-   - Run the "Search User Groups" request to find available user groups
-   - Update the `userGroupId` variable with a valid ID from the response
+## 🔍 Testing Placeholder Values
 
-## Authentication Flow
+When testing endpoints, replace these placeholder values:
 
-The collection uses OAuth 2.0 Client Credentials flow:
+| Placeholder | Example | How to Obtain |
+|-------------|---------|---------------|
+| `{userGroupId}` | `12345` | Run "List All Usergroups" |
+| `{accountNumber}` | `1234567890123456` | Run "List Accounts for Usergroup" |
+| `{creditCardAccountNumber}` | `4111111111111111` | Search for accounts with type "CREDIT_CARD" |
 
-1. POST to `/oauth/v1/token` with client credentials + valid scope
-2. Receive access_token in response  
-3. Use Bearer token for all subsequent API calls
-4. Include appropriate SSOID header:
-   - `HTTP_UserIdentifier: SBX:CLIENT` for reporting APIs
-   - `HTTP_UserIdentifier: SBX:ADMIN` for provisioning APIs
+## 🛠️ Troubleshooting
 
-## Current Testing Status
+### Common Issues
 
-✅ **Confirmed Working:**
-- Sandbox connectivity (sandbox.bottomline.app responds)
-- OAuth endpoint exists at `/oauth/v1/token`
-- API endpoints exist (return proper 403/400 errors vs 404)
-- Credentials are valid (no "invalid_client" errors)
+**401 Unauthorized**
+- Verify client_id and client_secret are correct
+- Check that access token is not expired (expires_in: 3600 seconds)
+- Re-run authentication request
 
-❌ **Blocked:**
-- OAuth scope parameter - all tested values return "invalid_scope"
-- Cannot obtain access tokens without valid scope
-- API calls fail with "Authorization field missing" errors
+**403 Forbidden** 
+- Verify `sso_id` matches your environment permissions
+- Try switching between `SBX:CLIENT` and `SBX:ADMIN`
+- Ensure scope includes necessary permissions
 
-## Next Steps
+**Invalid Scope Error**
+- Contact Bottomline support for valid scope values
+- Verify your client is authorized for requested scopes
+- Check environment-specific scope requirements
 
-1. **Immediate:** Contact Bottomline support for current OAuth scopes
-2. **Once resolved:** Test all endpoints for masked vs unmasked account data
-3. **Document:** Update this file with working scope values
-4. **Validate:** Confirm unmasked credit card account number access
+### Debug Steps
 
-## Tested OAuth Scopes (All Failed - 2026-06-03)
+1. **Verify Connectivity**: Test `GET {{baseUrl}}/health` (if available)
+2. **Check Authentication**: Ensure token request returns 200 OK
+3. **Test Simple Endpoint**: Try "List All Usergroups" first
+4. **Validate Headers**: Confirm HTTP_nameid and Authorization headers are set
+5. **Review Logs**: Check Postman console for detailed error messages
 
-- `digital_banking_provisioning`
-- `digital_banking_client_services`
-- `digital-banking`
-- `digital_banking`
-- `provisioning`
-- `reporting`
-- `read`
-- `client_services`
-- `openid`
+## 📞 Support Contacts
 
-Error: "The API scope URL provided is invalid" or "Missing Mandatory Parameter: Scope"
+- **Bottomline Developer Portal**: [portal.bottomline.app](https://portal.bottomline.app)
+- **API Support Email**: DBIQE-APIDevPortal-ProductSupport@bottomline.com
+- **Ignite Banking Team**: Contact for internal questions
+
+---
+
+**Note**: Keep credentials secure and never commit them to version control. Use Postman environment variables for sensitive data.

@@ -1,16 +1,16 @@
 {
   "info": {
-    "name": "First Horizon - Bottomline DBIQ Unmasked Credit Card APIs",
-    "description": "Collection of Bottomline DBIQ API endpoints that can potentially retrieve unmasked credit card account numbers for First Horizon Bank",
+    "name": "First Horizon - Bottomline DBIQ Credit Card Data Profiling",
+    "description": "Collection for discovering usergroups and retrieving credit card account details (masked/unmasked) from Bottomline DBIQ. Workflow: 1) Data Profiling - Find valid usergroups and identify those with credit card accounts, 2) Helpful Endpoints - Retrieve account details with masking flags to control masked vs unmasked display.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
   "auth": {
     "type": "bearer",
     "bearer": [
       {
         "key": "token",
-        "value": "{{access_token}}",
+        "value": "{{accessToken}}",
         "type": "string"
       }
     ]
@@ -21,21 +21,29 @@
       "value": "https://sandbox.bottomline.app"
     },
     {
-      "key": "access_token",
+      "key": "client_id", 
+      "value": ""
+    },
+    {
+      "key": "client_secret",
+      "value": ""
+    },
+    {
+      "key": "scope",
+      "value": "dbiq_all"
+    },
+    {
+      "key": "grant_type", 
+      "value": "client_credentials"
+    },
+    {
+      "key": "accessToken",
       "value": "",
       "type": "string"
     },
     {
-      "key": "client_id",
-      "value": "YOUR_CLIENT_ID"
-    },
-    {
-      "key": "client_secret",
-      "value": "YOUR_CLIENT_SECRET"
-    },
-    {
-      "key": "ssoid",
-      "value": "SBX:ADMIN"
+      "key": "sso_id",
+      "value": "SBX:CLIENT"
     }
   ],
   "item": [
@@ -44,7 +52,26 @@
       "item": [
         {
           "name": "Get OAuth2 Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', jsonData.access_token);",
+                  "    console.log('Access token updated:', jsonData.access_token);",
+                  "} else {", 
+                  "    console.log('Token request failed:', pm.response.text());",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -56,444 +83,309 @@
               "mode": "urlencoded",
               "urlencoded": [
                 {
-                  "key": "grant_type",
-                  "value": "client_credentials",
-                  "type": "text"
-                },
-                {
                   "key": "client_id",
-                  "value": "{{client_id}}",
-                  "type": "text"
+                  "value": "{{client_id}}"
                 },
                 {
-                  "key": "client_secret",
-                  "value": "{{client_secret}}",
-                  "type": "text"
+                  "key": "client_secret", 
+                  "value": "{{client_secret}}"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "{{grant_type}}"
+                },
+                {
+                  "key": "scope",
+                  "value": "{{scope}}"
                 }
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/oauth2/token",
+              "raw": "{{baseUrl}}/oauth/v1/token",
               "host": ["{{baseUrl}}"],
-              "path": ["oauth2", "token"]
+              "path": ["oauth", "v1", "token"]
             },
-            "description": "Get OAuth2 bearer token for API authentication"
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const responseJson = pm.response.json();",
-                  "    pm.collectionVariables.set('access_token', responseJson.access_token);",
-                  "    console.log('Access token set:', responseJson.access_token);",
-                  "} else {",
-                  "    console.log('Failed to get access token:', pm.response.text());",
-                  "}"
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "HIGH PRIORITY - Credit Card Endpoints",
-      "item": [
-        {
-          "name": "Get All Credit Card Account Summaries",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_all_001\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\",\n    \"includeUnmaskedAccount\": true\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/ALLACCOUNTS/accountSummary/getListView",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "reporting-account-balances",
-                "balanceAndTransaction",
-                "creditCardAccounts",
-                "ALLACCOUNTS",
-                "accountSummary",
-                "getListView"
-              ]
-            },
-            "description": "Retrieve all credit card account summaries - HIGHEST PRIORITY for unmasked account numbers"
-          }
-        },
-        {
-          "name": "Get Current Day Credit Card Summaries",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_currday_001\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\",\n    \"includeUnmaskedAccount\": true,\n    \"balanceType\": \"CURRENT\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/CURRDAY/accountSummary/getListView",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "reporting-account-balances",
-                "balanceAndTransaction",
-                "creditCardAccounts",
-                "CURRDAY",
-                "accountSummary",
-                "getListView"
-              ]
-            },
-            "description": "Get current day credit card account summaries with unmasked account numbers"
-          }
-        },
-        {
-          "name": "Request Real-Time Credit Card Balances",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"accounts\": [\n    {\n      \"accountNumber\": \"4111111111111111\",\n      \"accountType\": \"CREDIT_CARD\"\n    }\n  ],\n  \"requestId\": \"rt_cc_bal_001\",\n  \"priority\": \"HIGH\",\n  \"timeoutSeconds\": 30,\n  \"includeUnmaskedAccount\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/accountSummary/requestRealTimeBalances",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "reporting-account-balances",
-                "balanceAndTransaction",
-                "creditCardAccounts",
-                "accountSummary",
-                "requestRealTimeBalances"
-              ]
-            },
-            "description": "Request real-time credit card balances - may return unmasked account numbers"
-          }
-        },
-        {
-          "name": "Get Credit Card Transaction List",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_txn_001\",\n    \"sortOrder\": \"DESC\",\n    \"sortField\": \"transactionDate\"\n  },\n  \"filters\": {\n    \"dateRange\": {\n      \"startDate\": \"2024-01-01\",\n      \"endDate\": \"2024-12-31\"\n    },\n    \"includeUnmaskedAccount\": true,\n    \"transactionCategory\": \"ALL\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/balanceAndTransaction/creditCardAccounts/currentDay/getTransactions/getListView",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "reporting-account-transactions",
-                "balanceAndTransaction",
-                "creditCardAccounts",
-                "currentDay",
-                "getTransactions",
-                "getListView"
-              ]
-            },
-            "description": "Get credit card transaction list - may expose unmasked account numbers in transaction details"
-          }
-        },
-        {
-          "name": "Request Real-Time Credit Card Transactions",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"accounts\": [\n    {\n      \"accountNumber\": \"4111111111111111\",\n      \"accountType\": \"CREDIT_CARD\"\n    }\n  ],\n  \"requestId\": \"rt_cc_txn_001\",\n  \"priority\": \"HIGH\",\n  \"timeoutSeconds\": 30,\n  \"includeUnmaskedAccount\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/balanceAndTransaction/creditCardAccounts/getTransactions/requestRealTimeTransactions",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "reporting-account-transactions",
-                "balanceAndTransaction",
-                "creditCardAccounts",
-                "getTransactions",
-                "requestRealTimeTransactions"
-              ]
-            },
-            "description": "Request real-time credit card transactions - may return unmasked account numbers"
+            "description": "Obtain OAuth2 access token using client credentials flow"
           }
         }
       ]
     },
     {
-      "name": "MEDIUM PRIORITY - Account Management",
+      "name": "Data Profiling",
+      "description": "Endpoints to discover and profile the sandbox environment - find valid usergroups and identify those with credit card accounts",
       "item": [
         {
-          "name": "Get All Client Accounts for User Group",
+          "name": "List All Usergroups",
           "request": {
             "method": "GET",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
+                "key": "Authorization", 
+                "value": "{{accessToken}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/accounts?limit=50&page=1",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups",
-                "{{userGroupId}}",
-                "accounts"
-              ],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50"
-                },
-                {
-                  "key": "page",
-                  "value": "1"
-                }
-              ]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"]
             },
-            "description": "Get all client accounts for a user group - provisioning APIs often expose full account details"
+            "description": "Retrieve all usergroups to identify valid usergroup IDs for further queries"
           }
         },
         {
-          "name": "Search Accounts by Criteria",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"searchCriteria\": {\n    \"accountType\": \"CREDIT_CARD\",\n    \"accountStatus\": \"ACTIVE\",\n    \"includeUnmaskedAccount\": true\n  },\n  \"sortBy\": \"ACCOUNTNUMBER\",\n  \"sortOrder\": \"ASC\",\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "accounts:search"
-              ]
-            },
-            "description": "Search accounts by criteria - supports ACCOUNTNUMBER field and may return unmasked data"
-          }
-        },
-        {
-          "name": "Search User Groups",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"searchCriteria\": {\n    \"status\": \"AP\",\n    \"marketSegment\": \"COMMERCIAL\",\n    \"includeAccountDetails\": true\n  },\n  \"pagination\": {\n    \"pageSize\": 25,\n    \"pageNumber\": 1\n  }\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups:search"
-              ]
-            },
-            "description": "Search user groups - may include associated account details with full account numbers"
-          }
-        },
-        {
-          "name": "Get User Group Details",
+          "name": "Get Usergroup Details",
           "request": {
             "method": "GET",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
+                "key": "Authorization",
+                "value": "{{accessToken}}" 
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{userGroupId}",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups",
-                "{{userGroupId}}"
-              ]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{userGroupId}"]
             },
-            "description": "Get user group details including account information - may expose full account numbers"
+            "description": "Get detailed information about a specific usergroup. Replace {userGroupId} with actual ID from usergroups list."
           }
         },
         {
-          "name": "Create Client Account",
+          "name": "List Accounts for Usergroup",
+          "request": {
+            "method": "GET", 
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{userGroupId}/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{userGroupId}", "accounts"]
+            },
+            "description": "List all accounts associated with a usergroup to identify credit card accounts. Look for accountType = 'CREDIT_CARD' or similar."
+          }
+        },
+        {
+          "name": "Search Credit Card Accounts",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "HTTP_nameid", 
+                "value": "{{sso_id}}"
               },
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountNumber\": \"4111111111111111\",\n  \"accountName\": \"Test Credit Card Account\",\n  \"accountType\": \"CREDIT_CARD\",\n  \"currency\": \"USD\",\n  \"status\": \"ACTIVE\",\n  \"bankCode\": \"021000021\",\n  \"includeUnmaskedAccount\": true\n}"
+              "raw": "{\n  \"accountType\": \"CREDIT_CARD\",\n  \"status\": \"ACTIVE\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/accounts",
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/credit-card/search",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups",
-                "{{userGroupId}}",
-                "accounts"
-              ]
+              "path": ["digital-banking", "reporting-account-balances", "credit-card", "search"]
             },
-            "description": "Create client account - response may include full unmasked account details"
+            "description": "Search specifically for credit card accounts across all accessible usergroups"
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "Helpful Endpoints", 
+      "description": "Core endpoints for retrieving credit card account details with masking control - compare masked vs unmasked responses",
+      "item": [
         {
-          "name": "Update Client Account",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"accountName\": \"Updated Credit Card Account\",\n  \"status\": \"ACTIVE\",\n  \"includeUnmaskedAccount\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/accounts",
-              "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups",
-                "{{userGroupId}}",
-                "accounts"
-              ]
-            },
-            "description": "Update client account - response may expose unmasked account number"
-          }
-        },
-        {
-          "name": "Retrieve Account Limits",
+          "name": "Credit Card Balance (Current Day) - Masked",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "{{ssoid}}"
+                "key": "Authorization", 
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filters\": {\n    \"accountType\": \"CREDIT_CARD\",\n    \"limitType\": \"ALL\",\n    \"includeAccountDetails\": true\n  }\n}"
+              "raw": "{\n  \"userGroupId\": \"{userGroupId}\",\n  \"includeUnmaskedAccount\": false\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{{userGroupId}}/accountlimits:retrieve",
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/credit-card/current-day", 
               "host": ["{{baseUrl}}"],
-              "path": [
-                "digital-banking",
-                "onboarding-usergroup-provisioning",
-                "usergroups",
-                "{{userGroupId}}",
-                "accountlimits:retrieve"
-              ]
+              "path": ["digital-banking", "reporting-account-balances", "credit-card", "current-day"]
             },
-            "description": "Retrieve account limits - may include full account details with unmasked numbers"
+            "description": "Get credit card balances with MASKED account numbers (****1234 format). Set includeUnmaskedAccount=false."
+          }
+        },
+        {
+          "name": "Credit Card Balance (Current Day) - Unmasked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type", 
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userGroupId\": \"{userGroupId}\",\n  \"includeUnmaskedAccount\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/credit-card/current-day",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "reporting-account-balances", "credit-card", "current-day"]
+            },
+            "description": "Get credit card balances with UNMASKED account numbers (full 16 digits). Set includeUnmaskedAccount=true. Compare response with masked version."
+          }
+        },
+        {
+          "name": "Credit Card Transactions - Masked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw", 
+              "raw": "{\n  \"userGroupId\": \"{userGroupId}\",\n  \"accountNumber\": \"{creditCardAccountNumber}\",\n  \"includeUnmaskedAccount\": false,\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-12-31\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/credit-card/transaction-history",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "reporting-account-transactions", "credit-card", "transaction-history"]
+            },
+            "description": "Get credit card transaction history with MASKED account numbers. Set includeUnmaskedAccount=false."
+          }
+        },
+        {
+          "name": "Credit Card Transactions - Unmasked",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userGroupId\": \"{userGroupId}\",\n  \"accountNumber\": \"{creditCardAccountNumber}\",\n  \"includeUnmaskedAccount\": true,\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2024-12-31\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/credit-card/transaction-history",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "reporting-account-transactions", "credit-card", "transaction-history"]
+            },
+            "description": "Get credit card transaction history with UNMASKED account numbers. Set includeUnmaskedAccount=true. Compare response with masked version."
+          }
+        },
+        {
+          "name": "Get Account Details (Provisioning)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization", 
+                "value": "{{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/{userGroupId}/accounts/{accountNumber}",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", "{userGroupId}", "accounts", "{accountNumber}"]
+            },
+            "description": "Get detailed account information via provisioning endpoint - typically returns unmasked data for admin operations. Replace {userGroupId} and {accountNumber} with actual values."
+          }
+        },
+        {
+          "name": "Account Balance Summary (All Types)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userGroupId\": \"{userGroupId}\",\n  \"includeUnmaskedAccount\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "reporting-account-balances", "summary"]
+            },
+            "description": "Get balance summary for all account types including credit cards. Use includeUnmaskedAccount flag to control masking."
           }
         }
       ]
@@ -505,9 +397,10 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Auto-set timestamp for request IDs",
-          "const timestamp = Date.now();",
-          "pm.globals.set('timestamp', timestamp);"
+          "// Auto-refresh token if needed",
+          "if (!pm.collectionVariables.get('accessToken')) {",
+          "    console.log('No access token found - run Authentication > Get OAuth2 Access Token first');",
+          "}"
         ]
       }
     }

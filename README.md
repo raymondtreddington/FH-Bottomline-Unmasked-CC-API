@@ -1,91 +1,68 @@
-# First Horizon - Bottomline DBIQ Unmasked Credit Card API Collection
+# First Horizon - Bottomline DBIQ Credit Card Data Profiling
 
-## 🎯 Project Objective
+This repository contains a Postman collection for discovering usergroups and retrieving credit card account details (masked/unmasked) from Bottomline's DBIQ (Digital Banking Information Query) system.
 
-This repository contains a comprehensive Postman collection designed to help First Horizon Bank access unmasked credit card account numbers from their Bottomline DBIQ instance via API. The collection focuses on endpoints that are specifically designed for credit cards and are most likely to bypass the PCI security masking present in the standard user interface.
+## 🎯 **Project Workflow** 
 
-## 🔍 Problem Statement
+The collection implements a two-stage discovery and retrieval process:
 
-First Horizon needs to retrieve unmasked credit card account numbers from Bottomline DBIQ for their business processes. While the standard interface masks these numbers for PCI compliance and security purposes, specific API endpoints are designed to provide authorized systems with access to complete account information.
+1. **Data Profiling**: Find valid usergroups in the sandbox environment and identify those with credit card accounts
+2. **Helpful Endpoints**: Retrieve account details using masking flags to demonstrate masked vs unmasked account number display
 
-## 📊 **Current Status Update (2026-06-03)**
+This approach allows First Horizon to locate credit card accounts within their DBIQ instance and understand how to control the masking behavior via API parameters.
 
-### ✅ **Credentials Located**
-Located actual Bottomline sandbox credentials in OpenClaw environment:
-- **Client Services**: `05468a71-3639-4ff9-98db-0dd91846f576` (for reporting APIs)
-- **Provisioning**: `a5826cd0-7a33-4b23-9974-bc0780c6d009` (for user management APIs)
-- **Base URL**: `https://sandbox.bottomline.app`
-- **OAuth Endpoint**: `/oauth/v1/token` (confirmed accessible)
+## 🔑 **Key Concept: Masking Control**
 
-### ❌ **OAuth Scope Issue - BLOCKING** 
-**Problem**: All OAuth authentication attempts fail with **"invalid_scope"** errors.
+The core insight is that DBIQ APIs support an `includeUnmaskedAccount` flag that controls whether account numbers are returned masked (`****1234`) or unmasked (`1234567890123456`). This flag allows authorized applications to access complete credit card numbers for backend processing while maintaining PCI compliance in user-facing interfaces.
 
-**Root Cause**: The OAuth `scope` parameter is mandatory, but all tested scope values are rejected:
-```
-✗ digital_banking_provisioning
-✗ digital_banking_client_services  
-✗ digital-banking
-✗ read, openid, etc.
+**Masked Response Example:**
+```json
+{
+  "account": "****1234",
+  "accountType": "CREDIT_CARD",
+  "balance": 2500.00
+}
 ```
 
-**Resolution Required**: Contact **DBIQE-APIDevPortal-ProductSupport@bottomline.com** for current valid OAuth scope values.
+**Unmasked Response Example:**
+```json
+{
+  "account": "****1234", 
+  "unmaskedAccount": "1234567890123456",
+  "accountType": "CREDIT_CARD",
+  "balance": 2500.00
+}
+```
 
-### 🔧 **What's Ready**
-✅ Complete Postman collection with 12 endpoints  
-✅ Sandbox connectivity confirmed  
-✅ API endpoint structure validated  
-✅ Authentication flow documented  
-✅ Multiple environments configured (Client Services + Provisioning)
+## 📁 **Collection Structure**
 
-### ⏳ **Next Steps**
-1. **Immediate**: Resolve OAuth scope issue with Bottomline support
-2. **Then**: Execute full endpoint testing
-3. **Finally**: Document unmasked credit card examples for First Horizon
+### 🔐 **Authentication**
+- **Get OAuth2 Access Token**: Obtains Bearer token using client credentials flow
 
-## 📋 Comprehensive Endpoint Analysis
+### 🔍 **Data Profiling**
+Discovery endpoints to explore and understand the sandbox environment:
+- **List All Usergroups**: Find valid usergroup IDs in the environment
+- **Get Usergroup Details**: Examine specific usergroup configuration  
+- **List Accounts for Usergroup**: Discover accounts associated with usergroups
+- **Search Credit Card Accounts**: Locate credit card accounts specifically
 
-### 🔴 **HIGH PRIORITY ENDPOINTS** 
-*Credit Card Specific - Most Likely to Return Unmasked Data*
+### 🎯 **Helpful Endpoints**
+Core endpoints demonstrating masked vs unmasked account number retrieval:
+- **Credit Card Balance (Masked/Unmasked)**: Compare responses with `includeUnmaskedAccount` flag
+- **Credit Card Transactions (Masked/Unmasked)**: Transaction history with masking control
+- **Get Account Details (Provisioning)**: Admin-level account information access
+- **Account Balance Summary**: Multi-account balance retrieval with masking flags
 
-| Endpoint | Base Path | Priority | Description |
-|----------|-----------|----------|-------------|
-| `POST /balanceAndTransaction/creditCardAccounts/ALLACCOUNTS/accountSummary/getListView` | `/digital-banking/reporting-account-balances` | **HIGHEST** | All credit card account summaries |
-| `POST /balanceAndTransaction/creditCardAccounts/CURRDAY/accountSummary/getListView` | `/digital-banking/reporting-account-balances` | **HIGH** | Current day credit card summaries |
-| `POST /balanceAndTransaction/creditCardAccounts/accountSummary/requestRealTimeBalances` | `/digital-banking/reporting-account-balances` | **HIGH** | Real-time credit card balances |
-| `POST /balanceAndTransaction/creditCardAccounts/currentDay/getTransactions/getListView` | `/digital-banking/reporting-account-transactions` | **HIGH** | Credit card transaction list |
-| `POST /balanceAndTransaction/creditCardAccounts/getTransactions/requestRealTimeTransactions` | `/digital-banking/reporting-account-transactions` | **HIGH** | Real-time credit card transactions |
-
-### 🟡 **MEDIUM PRIORITY ENDPOINTS**
-*Account Management - Provisioning APIs Often Expose Full Data*
-
-| Endpoint | Base Path | Priority | Description |
-|----------|-----------|----------|-------------|
-| `GET /usergroups/{userGroupId}/accounts` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | All client accounts for user group |
-| `POST /accounts:search` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | Search accounts by criteria |
-| `POST /usergroups:search` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | Search user groups with account details |
-| `GET /usergroups/{userGroupId}` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | User group details with accounts |
-| `POST /usergroups/{userGroupId}/accounts` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | Create account (response may include full data) |
-| `PATCH /usergroups/{userGroupId}/accounts` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | Update account |
-| `POST /usergroups/{userGroupId}/accountlimits:retrieve` | `/digital-banking/onboarding-usergroup-provisioning` | **MEDIUM** | Account limits with details |
-
-## 🔑 Key Indicators for Unmasked Data
-
-1. **`unmaskedAccount` Flag**: Look for this parameter in request bodies and response fields
-2. **Admin-Level Access**: Endpoints using `SBX:ADMIN` in `HTTP_UserIdentifier` header
-3. **Provisioning vs Reporting**: Account provisioning/management endpoints often expose full data
-4. **Real-Time Requests**: Real-time data endpoints may bypass UI masking
-5. **Credit Card Specific**: Endpoints specifically designed for credit card account types
-
-## 🚀 Getting Started
+## 🚀 **Getting Started**
 
 ### Prerequisites
 
 1. **Bottomline DBIQ API Credentials**:
    - Client ID
-   - Client Secret
+   - Client Secret  
    - Access to Bottomline sandbox environment (`sandbox.bottomline.app`)
 
-2. **Postman**: Install [Postman](https://www.postman.com/downloads/) 
+2. **Postman**: Install [Postman](https://www.postman.com/downloads/)
 
 ### Setup Instructions
 
@@ -102,85 +79,71 @@ Located actual Bottomline sandbox credentials in OpenClaw environment:
    - `baseUrl`: `https://sandbox.bottomline.app`
    - `client_id`: Your Bottomline API client ID
    - `client_secret`: Your Bottomline API client secret
-   - `ssoid`: `SBX:ADMIN` (for administrative access)
-   - `userGroupId`: Target user group ID (obtain from user group search)
+   - `scope`: `dbiq_all` (or appropriate scope for your environment)
+   - `grant_type`: `client_credentials`
+   - `sso_id`: `SBX:CLIENT` (or `SBX:ADMIN` for admin access)
 
 3. **Authentication**:
    - Run the "Get OAuth2 Access Token" request first
-   - The access token will be automatically set for subsequent requests
+   - The access token will be automatically set as `{{accessToken}}` for subsequent requests
 
-## 📁 Collection Structure
+## 🧪 **Testing Workflow**
 
-```
-📦 First Horizon - Bottomline DBIQ Unmasked Credit Card APIs
-├── 🔐 Authentication
-│   └── Get OAuth2 Access Token
-├── 🔴 HIGH PRIORITY - Credit Card Endpoints
-│   ├── Get All Credit Card Account Summaries
-│   ├── Get Current Day Credit Card Summaries  
-│   ├── Request Real-Time Credit Card Balances
-│   ├── Get Credit Card Transaction List
-│   └── Request Real-Time Credit Card Transactions
-└── 🟡 MEDIUM PRIORITY - Account Management
-    ├── Get All Client Accounts for User Group
-    ├── Search Accounts by Criteria
-    ├── Search User Groups
-    ├── Get User Group Details
-    ├── Create Client Account
-    ├── Update Client Account
-    └── Retrieve Account Limits
-```
+### Phase 1: Data Profiling
+1. **Authenticate**: Get OAuth2 token
+2. **Discover Usergroups**: Run "List All Usergroups" to find valid IDs
+3. **Profile Accounts**: Use "List Accounts for Usergroup" to find credit card accounts
+4. **Search Credit Cards**: Use "Search Credit Card Accounts" for targeted discovery
 
-## 🧪 Testing Strategy
+### Phase 2: Masked vs Unmasked Testing
+1. **Test Masked Response**: Run "Credit Card Balance - Masked" (`includeUnmaskedAccount: false`)
+2. **Test Unmasked Response**: Run "Credit Card Balance - Unmasked" (`includeUnmaskedAccount: true`) 
+3. **Compare Results**: Identify the presence of `unmaskedAccount` fields
+4. **Repeat for Transactions**: Test transaction endpoints with both flag settings
 
-1. **Start with HIGH PRIORITY endpoints** - these are most likely to return unmasked data
-2. **Use Admin-level access** (`SBX:ADMIN` SSOID) for maximum permissions
-3. **Include unmasked flags** in request bodies where applicable:
-   ```json
-   {
-     "includeUnmaskedAccount": true,
-     "includeAccountDetails": true
-   }
-   ```
-4. **Test different account types** - focus on `CREDIT_CARD` account type
-5. **Check response schemas** for `unmaskedAccount` or similar fields
+### Phase 3: Validation
+1. **Verify Full Numbers**: Confirm unmasked responses contain complete 16-digit credit card numbers
+2. **Document Findings**: Record which endpoints support unmasked access
+3. **Test Edge Cases**: Try different account types and user permission levels
 
-## 🔍 Response Analysis
+## 🔍 **What to Look For**
 
-When testing endpoints, look for these indicators of unmasked data:
+When testing endpoints, look for these indicators of successful unmasked data retrieval:
 
-- **Full 16-digit credit card numbers** (vs. masked like `****1234`)
-- **Fields named**: `unmaskedAccountNumber`, `fullAccountNumber`, `completeAccount`
-- **Admin response sections** that may contain sensitive data
-- **Account details in provisioning responses** 
+- **Full 16-digit credit card numbers** in `unmaskedAccount` fields
+- **Response field differences** between masked/unmasked requests
+- **Account type filtering** working correctly for credit cards
+- **Permission-based access** varying by `sso_id` value
 
-## 🛡️ Security Considerations
+## 🛡️ **Security Considerations**
 
-- **Use sandbox environment only** for testing
-- **Never commit real credentials** to this repository
-- **Follow PCI compliance** requirements in production usage
-- **Limit access** to authorized personnel only
-- **Audit API calls** as required by your organization
+- **Sandbox Only**: Use sandbox environment for all testing
+- **Credential Security**: Never commit real credentials to version control
+- **PCI Compliance**: Follow organizational PCI requirements for production use
+- **Access Control**: Limit unmasked data access to authorized systems only
+- **Audit Logging**: Ensure API calls are logged per compliance requirements
 
-## 📊 Documentation Sources
+## 📋 **Environment Variables Reference**
 
-This collection is based on comprehensive analysis of:
-- Bottomline DBIQ REST API Specification v24.11.0
-- Account Balances Reporting API (16 endpoints)
-- Account Transactions Reporting API (12 endpoints) 
-- User Group Provisioning API v24.08.0
-- Client Account Maintenance API
-- User Management Provisioning API
+| Variable | Example Value | Description |
+|----------|---------------|-------------|
+| `baseUrl` | `https://sandbox.bottomline.app` | Bottomline API base URL |
+| `client_id` | `05468a71-3639-4ff9-98db-0dd91846f576` | OAuth client identifier |
+| `client_secret` | `[CONFIDENTIAL]` | OAuth client secret |
+| `scope` | `dbiq_all` | OAuth scope for DBIQ access |
+| `grant_type` | `client_credentials` | OAuth grant type |
+| `sso_id` | `SBX:CLIENT` | SSO identifier for API requests |
+| `accessToken` | `[AUTO-SET]` | OAuth access token (set by auth request) |
 
-## 🤝 Support
+## 🤝 **Support**
 
-For technical questions or issues:
-1. Check Bottomline Developer Portal documentation
-2. Review API response codes and error messages
-3. Verify authentication and permissions
+For questions or issues:
+1. Review Bottomline Developer Portal documentation
+2. Check API response codes and error messages  
+3. Verify authentication and scope configuration
 4. Contact Ignite Banking team for assistance
 
-## 📝 License
+## 📝 **License**
 
 This project is proprietary to Ignite Banking and First Horizon Bank. Unauthorized distribution or use is prohibited.
 
@@ -188,4 +151,4 @@ This project is proprietary to Ignite Banking and First Horizon Bank. Unauthoriz
 
 **Created by**: Raymond Reddington (Ignite Banking)  
 **Client**: First Horizon Bank  
-**Last Updated**: December 2024
+**Last Updated**: June 2026
