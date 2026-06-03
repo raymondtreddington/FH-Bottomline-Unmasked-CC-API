@@ -191,7 +191,7 @@
         			"raw": "{\n  \"filters\": [\n    {\n      \"searchField\": \"COMPANYNAME\",\n      \"searchText\": \"Demo\",\n      \"searchType\": \"CONTAINS\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50\n  },\n  \"sortBy\": {\n    \"field\": \"COMPANYNAME\",\n    \"order\": \"ASC\"\n  }\n}"
         		},
         		"url": {
-        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search?company_name_search=Demo&search_field=COMPANYNAME&search_type=CONTAINS",
+        			"raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups:search?company_name_search=Demo&search_field=COMPANYNAME&search_type=CONTAINS&limit=50&order=ASC",
         			"host": [
         				"{{baseUrl}}"
         			],
@@ -215,6 +215,16 @@
         					"key": "search_type",
         					"value": "CONTAINS",
         					"description": "Search type (CONTAINS, EXACT, STARTS_WITH)"
+        				},
+        				{
+        					"key": "limit",
+        					"value": "50",
+        					"description": "Maximum number of results to return (default: 50)"
+        				},
+        				{
+        					"key": "order",
+        					"value": "ASC",
+        					"description": "Sort order (ASC or DESC, default: ASC)"
         				}
         			]
         		}
