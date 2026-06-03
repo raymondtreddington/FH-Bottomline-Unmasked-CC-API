@@ -143,7 +143,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -164,7 +164,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -193,7 +193,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -221,7 +221,7 @@
             "method": "GET",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -261,7 +261,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -290,7 +290,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -319,7 +319,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
@@ -348,7 +348,7 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_nameid",
+                "key": "HTTP_UserIdentifier",
                 "value": "{{sso_id}}"
               },
               {
