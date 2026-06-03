@@ -163,73 +163,95 @@
       ]
     },
     {
-      "name": "Credit Card API - Unmasked Access",
+      "name": "Usergroup Account Access - Unmasked Credit Cards",
       "item": [
         {
-          "name": "Get Credit Card Balances - MASKED",
+          "name": "Get All Accounts for UserGroup - MASKED",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
+                "key": "HTTP_nameid",
                 "value": "{{sso_id}}"
               },
               {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_bal_masked\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\"\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/CURRDAY/accountSummary/getListView",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?limit=100&page=1",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-balances", "balanceAndTransaction", "creditCardAccounts", "CURRDAY", "accountSummary", "getListView"]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                },
+                {
+                  "key": "page", 
+                  "value": "1"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "userGroupId",
+                  "value": "",
+                  "description": "Enter the UserGroup ID to retrieve accounts for"
+                }
+              ]
             }
           }
         },
         {
-          "name": "Get Credit Card Balances - UNMASKED",
+          "name": "Get All Accounts for UserGroup - UNMASKED",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
+                "key": "HTTP_nameid",
                 "value": "{{sso_id}}"
               },
               {
                 "key": "Authorization",
                 "value": "Bearer {{access_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_bal_unmasked\",\n    \"sortOrder\": \"ASC\",\n    \"sortField\": \"accountNumber\"\n  },\n  \"filters\": {\n    \"accountStatus\": \"ACTIVE\",\n    \"includeUnmaskedAccount\": true\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
-            },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-balances/balanceAndTransaction/creditCardAccounts/CURRDAY/accountSummary/getListView",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups/:userGroupId/accounts?limit=100&page=1&includeUnmaskedAccount=true",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-balances", "balanceAndTransaction", "creditCardAccounts", "CURRDAY", "accountSummary", "getListView"]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups", ":userGroupId", "accounts"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                },
+                {
+                  "key": "page", 
+                  "value": "1"
+                },
+                {
+                  "key": "includeUnmaskedAccount",
+                  "value": "true"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "userGroupId",
+                  "value": "",
+                  "description": "Enter the UserGroup ID to retrieve unmasked accounts for"
+                }
+              ]
             }
           }
         },
         {
-          "name": "Get Credit Card Transactions - MASKED",
+          "name": "Search Accounts with Criteria - MASKED",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
+                "key": "HTTP_nameid",
                 "value": "{{sso_id}}"
               },
               {
@@ -243,22 +265,22 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_txn_masked\",\n    \"sortOrder\": \"DESC\",\n    \"sortField\": \"transactionDate\"\n  },\n  \"filters\": {\n    \"dateRange\": {\n      \"startDate\": \"2024-01-01\",\n      \"endDate\": \"2024-12-31\"\n    }\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
+              "raw": "{\n  \"filters\": {\n    \"userGroup\": \"{{userGroupId}}\",\n    \"accountType\": \"CREDIT_CARD\"\n  },\n  \"sorting\": {\n    \"field\": \"ACCOUNTNUMBER\",\n    \"order\": \"ASC\"\n  },\n  \"pagination\": {\n    \"limit\": 50,\n    \"offset\": 0\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/balanceAndTransaction/creditCardAccounts/currentDay/getTransactions/getListView",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-transactions", "balanceAndTransaction", "creditCardAccounts", "currentDay", "getTransactions", "getListView"]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
             }
           }
         },
         {
-          "name": "Get Credit Card Transactions - UNMASKED",
+          "name": "Search Accounts with Criteria - UNMASKED",
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
+                "key": "HTTP_nameid",
                 "value": "{{sso_id}}"
               },
               {
@@ -272,12 +294,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"listViewConfig\": {\n    \"requestId\": \"cc_txn_unmasked\",\n    \"sortOrder\": \"DESC\",\n    \"sortField\": \"transactionDate\"\n  },\n  \"filters\": {\n    \"dateRange\": {\n      \"startDate\": \"2024-01-01\",\n      \"endDate\": \"2024-12-31\"\n    },\n    \"includeUnmaskedAccount\": true\n  },\n  \"pagination\": {\n    \"pageSize\": 50,\n    \"pageNumber\": 1\n  }\n}"
+              "raw": "{\n  \"filters\": {\n    \"userGroup\": \"{{userGroupId}}\",\n    \"accountType\": \"CREDIT_CARD\",\n    \"includeUnmaskedAccount\": true\n  },\n  \"sorting\": {\n    \"field\": \"ACCOUNTNUMBER\",\n    \"order\": \"ASC\"\n  },\n  \"pagination\": {\n    \"limit\": 50,\n    \"offset\": 0\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/digital-banking/reporting-account-transactions/balanceAndTransaction/creditCardAccounts/currentDay/getTransactions/getListView",
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/accounts:search",
               "host": ["{{baseUrl}}"],
-              "path": ["digital-banking", "reporting-account-transactions", "balanceAndTransaction", "creditCardAccounts", "currentDay", "getTransactions", "getListView"]
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "accounts:search"]
             }
           }
         }
