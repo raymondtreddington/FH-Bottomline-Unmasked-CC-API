@@ -107,6 +107,42 @@
       "name": "Data Profiling",
       "item": [
         {
+          "name": "Get All Usergroups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/digital-banking/onboarding-usergroup-provisioning/usergroups?page=1&limit=200",
+              "host": ["{{baseUrl}}"],
+              "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit", 
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "PRIMARY DISCOVERY ENDPOINT: List all user groups with pagination. This is the simplest way to discover available user groups in the system. Returns userGroupSummaries array with userGroupId, groupName, and other details."
+          }
+        },
+        {
           "name": "Search User Groups",
           "request": {
             "method": "POST",
@@ -133,7 +169,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["digital-banking", "onboarding-usergroup-provisioning", "usergroups:search"]
             },
-            "description": "PRIMARY DISCOVERY ENDPOINT: Search for user groups using filters. Leave filters empty to get all approved (AP status) user groups in the system. This is the main way to discover available user groups since there's no simple 'list all' endpoint."
+            "description": "ALTERNATIVE DISCOVERY ENDPOINT: Search for user groups using filters. Leave filters empty to get all approved (AP status) user groups in the system. More flexible than GET /usergroups but requires request body."
           }
         },
         {
