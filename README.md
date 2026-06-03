@@ -76,16 +76,19 @@ Core endpoints demonstrating masked vs unmasked account number retrieval:
    ```
 
 2. **Configure Environment Variables**:
+   Set up these variables in your Postman environment:
    - `baseUrl`: `https://sandbox.bottomline.app`
    - `client_id`: Your Bottomline API client ID
    - `client_secret`: Your Bottomline API client secret
    - `scope`: `dbiq_all` (or appropriate scope for your environment)
    - `grant_type`: `client_credentials`
    - `sso_id`: `SBX:CLIENT` (or `SBX:ADMIN` for admin access)
+   - `access_token`: (will be auto-set by authentication request)
 
 3. **Authentication**:
-   - Run the "Get OAuth2 Access Token" request first
-   - The access token will be automatically set as `{{accessToken}}` for subsequent requests
+   - The collection inherits authentication from your Postman environment
+   - Run the "Get OAuth2 Access Token" request first (uses Basic Auth with client credentials)
+   - The access token will be automatically set as `{{access_token}}` for subsequent requests
 
 ## 🧪 **Testing Workflow**
 
@@ -133,7 +136,7 @@ When testing endpoints, look for these indicators of successful unmasked data re
 | `scope` | `dbiq_all` | OAuth scope for DBIQ access |
 | `grant_type` | `client_credentials` | OAuth grant type |
 | `sso_id` | `SBX:CLIENT` | SSO identifier for API requests |
-| `accessToken` | `[AUTO-SET]` | OAuth access token (set by auth request) |
+| `access_token` | `[AUTO-SET]` | OAuth access token (set by auth request) |
 
 ## 🤝 **Support**
 

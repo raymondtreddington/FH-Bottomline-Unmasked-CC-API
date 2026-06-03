@@ -14,7 +14,7 @@ Configure these variables in your Postman environment:
 | `scope` | `dbiq_all` | OAuth scope for DBIQ access |
 | `grant_type` | `client_credentials` | OAuth grant type |
 | `sso_id` | `SBX:CLIENT` | SSO identifier for API requests |
-| `accessToken` | `[AUTO-SET]` | OAuth token (automatically set by auth request) |
+| `access_token` | `[AUTO-SET]` | OAuth token (automatically set by auth request) |
 
 ## 🔑 Authentication Flow
 
@@ -25,15 +25,16 @@ Configure these variables in your Postman environment:
 
 ### Step 2: Obtain Access Token
 1. Run the "Get OAuth2 Access Token" request in the Authentication folder
-2. The request will automatically set the `accessToken` variable on success
-3. All subsequent requests will use this token via `{{accessToken}}`
+2. The request will automatically set the `access_token` variable on success
+3. All subsequent requests will use this token via `{{access_token}}`
 
 ### Step 3: Verify Authentication
 ```http
 POST {{baseUrl}}/oauth/v1/token
+Authorization: Basic {{client_id}}:{{client_secret}}
 Content-Type: application/x-www-form-urlencoded
 
-client_id={{client_id}}&client_secret={{client_secret}}&grant_type={{grant_type}}&scope={{scope}}
+grant_type={{grant_type}}&scope={{scope}}
 ```
 
 Expected response:
@@ -52,7 +53,7 @@ All API requests (except authentication) use these headers:
 | Header | Value | Purpose |
 |--------|--------|---------|
 | `HTTP_nameid` | `{{sso_id}}` | User identification |
-| `Authorization` | `{{accessToken}}` | Bearer token authentication |
+| `Authorization` | `{{access_token}}` | Bearer token authentication |
 | `Content-Type` | `application/json` | Request body format (for POST requests) |
 
 ## 🌐 Environment-Specific Settings

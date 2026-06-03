@@ -3,49 +3,11 @@
     "name": "First Horizon - Bottomline DBIQ Credit Card Data Profiling",
     "description": "Collection for discovering usergroups and retrieving credit card account details (masked/unmasked) from Bottomline DBIQ. Workflow: 1) Data Profiling - Find valid usergroups and identify those with credit card accounts, 2) Helpful Endpoints - Retrieve account details with masking flags to control masked vs unmasked display.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "2.0.0"
+    "version": "2.0.1"
   },
   "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{accessToken}}",
-        "type": "string"
-      }
-    ]
+    "type": "inherit"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "https://sandbox.bottomline.app"
-    },
-    {
-      "key": "client_id", 
-      "value": ""
-    },
-    {
-      "key": "client_secret",
-      "value": ""
-    },
-    {
-      "key": "scope",
-      "value": "dbiq_all"
-    },
-    {
-      "key": "grant_type", 
-      "value": "client_credentials"
-    },
-    {
-      "key": "accessToken",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "sso_id",
-      "value": "SBX:CLIENT"
-    }
-  ],
   "item": [
     {
       "name": "Authentication",
@@ -59,7 +21,7 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.access_token);",
+                  "    pm.environment.set('access_token', jsonData.access_token);",
                   "    console.log('Access token updated:', jsonData.access_token);",
                   "} else {", 
                   "    console.log('Token request failed:', pm.response.text());",
@@ -70,26 +32,25 @@
           ],
           "request": {
             "auth": {
-              "type": "noauth"
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{client_id}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password", 
+                  "value": "{{client_secret}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/x-www-form-urlencoded"
-              }
-            ],
+            "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                {
-                  "key": "client_id",
-                  "value": "{{client_id}}"
-                },
-                {
-                  "key": "client_secret", 
-                  "value": "{{client_secret}}"
-                },
                 {
                   "key": "grant_type",
                   "value": "{{grant_type}}"
@@ -105,7 +66,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["oauth", "v1", "token"]
             },
-            "description": "Obtain OAuth2 access token using client credentials flow"
+            "description": "Obtain OAuth2 access token using client credentials flow with Basic Auth"
           }
         }
       ]
@@ -125,7 +86,7 @@
               },
               {
                 "key": "Authorization", 
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -147,7 +108,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}" 
+                "value": "{{access_token}}" 
               }
             ],
             "url": {
@@ -169,7 +130,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -191,7 +152,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -227,7 +188,7 @@
               },
               {
                 "key": "Authorization", 
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -257,7 +218,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type", 
@@ -287,7 +248,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -317,7 +278,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -347,7 +308,7 @@
               },
               {
                 "key": "Authorization", 
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               }
             ],
             "url": {
@@ -369,7 +330,7 @@
               },
               {
                 "key": "Authorization",
-                "value": "{{accessToken}}"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
@@ -397,8 +358,8 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Auto-refresh token if needed",
-          "if (!pm.collectionVariables.get('accessToken')) {",
+          "// Check if access token exists",
+          "if (!pm.environment.get('access_token')) {",
           "    console.log('No access token found - run Authentication > Get OAuth2 Access Token first');",
           "}"
         ]
