@@ -272,24 +272,16 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "SBX:ADMIN",
-                "type": "text"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
                 "key": "Authorization",
-                "value": "{{access_token}}",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
+                "value": "application/json"
               }
             ],
             "body": {
@@ -317,24 +309,16 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "SBX:ADMIN",
-                "type": "text"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
                 "key": "Authorization",
-                "value": "{{access_token}}",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
+                "value": "application/json"
               }
             ],
             "body": {
@@ -362,24 +346,16 @@
             "method": "POST",
             "header": [
               {
-                "key": "HTTP_UserIdentifier",
-                "value": "SBX:ADMIN",
-                "type": "text"
+                "key": "HTTP_nameid",
+                "value": "{{sso_id}}"
               },
               {
                 "key": "Authorization",
-                "value": "{{access_token}}",
-                "type": "text"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
+                "value": "{{access_token}}"
               },
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
+                "value": "application/json"
               }
             ],
             "body": {
