@@ -201,8 +201,7 @@
             },
             "description": "Get transaction limits (daily, per-transaction) configured for the user group. Important for understanding access levels and permissions."
           }
-        },
-
+        }
       ]
     },
     {
